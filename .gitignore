@@ -1,0 +1,17 @@
+# VSCode
+.vscode/
+
+# Backend (Kotlin/Gradle)
+backend/.gradle/
+backend/build/
+backend/bin/
+backend/*.zip
+
+# Frontend (caso use Node.js)
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# Sistema
+.DS_Store
+Thumbs.db
