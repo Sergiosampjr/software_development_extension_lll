@@ -1,9 +1,10 @@
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from "react-native"
+import { router } from "expo-router"
 
 export default function HomeScreen() {
   const handleStartChat = () => {
-    // Aqui você pode navegar para a tela do chat
-    console.log("Iniciar chat")
+    router.push("/home/login")
+    console.log('start chat!')
   }
 
   return (
