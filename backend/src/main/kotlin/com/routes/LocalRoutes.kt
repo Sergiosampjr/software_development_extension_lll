@@ -1,4 +1,9 @@
 package com.sergio.chatbot.routes
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import io.ktor.http.*
+
+
 
 import com.sergio.chatbot.models.Local
 import io.ktor.server.application.*
@@ -14,14 +19,34 @@ fun Route.localRoutes() {
     )
 
     get("/locais") {
-        try {
-            call.respond(locais) // agora deve funcionar
-        } catch (e: Exception) {
-            e.printStackTrace()
-            call.respondText(
-                "Erro ao processar /locais: ${e.message}",
-                status = io.ktor.http.HttpStatusCode.InternalServerError
-            )
+    val nome = call.request.queryParameters["nome"]
+    val tipo = call.request.queryParameters["tipo"]
+
+    val resultado = locais.filter {
+        (nome == null || it.nome.contains(nome, ignoreCase = true)) &&
+        (tipo == null || it.tipo.equals(tipo, ignoreCase = true))
+    }
+
+    call.respondText(
+        Json.encodeToString(resultado),
+        ContentType.Application.Json
+    )
+}
+
+
+fun Routing.localRoutes() {
+    get("/local/{nome}") {
+        val nome = call.parameters["nome"]
+        val local = locais.find { it.nome.equals(nome, ignoreCase = true) }
+
+        if (local != null) {
+            call.respond(local)
+        } else {
+            call.respondText("Local não encontrado")
         }
     }
 }
+
+
+}
+
