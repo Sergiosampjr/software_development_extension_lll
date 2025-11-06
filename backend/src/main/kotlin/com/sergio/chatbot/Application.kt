@@ -11,6 +11,8 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import com.sergio.chatbot.models.Local
 import com.sergio.chatbot.routes.localRoutes
+import com.sergio.chatbot.routes.chatRoutes
+
 
 fun main() {
     embeddedServer(Netty, port = 8080) {
@@ -30,7 +32,7 @@ fun Application.module() {
 
     routing {
         localRoutes() // rota /locais
-
+        chatRoutes()
         get("/") {
             call.respondText("Servidor Ktor rodando com sucesso!")
         }
