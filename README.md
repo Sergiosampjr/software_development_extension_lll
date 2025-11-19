@@ -38,6 +38,6 @@ A integração é feita através da Groq API, que permite acesso gratuito a mode
 
 obs: A API é 100% gratuita, mas possui limites de requisições por minuto e por dia.
 
-- Comoo utilizar essa chave no backend:
+- Como utilizar essa chave no backend:
 No repositorio backend, você deve colocar sua API Key no arquivo *GroqService.kt* na linha de codigo "private const val apiKey = "" // sua chave da Groq".
 
