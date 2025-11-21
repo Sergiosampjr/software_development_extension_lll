@@ -1,43 +1,50 @@
 "use client"
 
+import { router } from "expo-router"
 import { useState } from "react"
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Image,
 } from "react-native"
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
   const handleLogin = () => {
     // Lógica de login aqui
     console.log("Login com email:", email)
+    console.log("Login com senha:", password)
     // Navegar para próxima tela após login
+    // Depois de validar, navegue para o chat
+    router.push("/home/chat")
   }
 
   const handleCreateAccount = () => {
     // Navegar para tela de cadastro
     console.log("Criar conta")
   }
+  
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <StatusBar backgroundColor="#4CAF50" barStyle="light-content" />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Logo/Brasão da UECE */}
         <View style={styles.logoContainer}>
-          <View style={styles.logoPlaceholder}>
-            <Text style={styles.logoText}>🏛️</Text>
-            <Text style={styles.flamesText}>🔥🔥🔥</Text>
-          </View>
+          <Image 
+            source={require('../../public/UECE_2023.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </View>
 
         {/* Título */}
@@ -55,6 +62,19 @@ export default function LoginScreen() {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#999"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
             autoCapitalize="none"
             autoCorrect={false}
           />
@@ -91,23 +111,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 32,
   },
-  logoPlaceholder: {
-    alignItems: "center",
-    justifyContent: "center",
+  logo: {
     width: 120,
     height: 120,
-    backgroundColor: "#F5F5F5",
-    borderRadius: 60,
-    marginBottom: 16,
-  },
-  logoText: {
-    fontSize: 40,
-    marginBottom: 8,
-  },
-  flamesText: {
-    fontSize: 16,
-    position: "absolute",
-    top: 10,
   },
   title: {
     fontSize: 28,

@@ -1,34 +1,41 @@
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from "react-native"
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Image } from "react-native"
 import { router } from "expo-router"
 
 export default function HomeScreen() {
-  const handleStartChat = () => {
+  const handleVisitorChat = () => {
+    router.push("/home/chat")
+  }
+
+  const handleStudentChat = () => {
     router.push("/home/login")
-    console.log('start chat!')
   }
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#4CAF50" barStyle="light-content" />
 
-      {/* Barra verde superior */}
       <View style={styles.topBar} />
 
-      {/* Conteúdo principal */}
       <View style={styles.content}>
         <Text style={styles.welcomeText}>Bem vindo ao</Text>
         <Text style={styles.botName}>UECEBot</Text>
 
-        {/* Ícone do mascote - usando emoji como placeholder */}
         <View style={styles.iconContainer}>
-          <Text style={styles.botIcon}>🤖</Text>
+          <Image 
+            source={require('../../public/UECE_2023.png')}
+            style={styles.ueceLogoImage}
+            resizeMode="contain"
+          />
         </View>
       </View>
 
-      {/* Botão iniciar chat */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.startButton} onPress={handleStartChat}>
-          <Text style={styles.buttonText}>Iniciar chat</Text>
+        <TouchableOpacity style={styles.startButton} onPress={handleVisitorChat}>
+          <Text style={styles.buttonText}>Iniciar chat como visitante</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.startButton} onPress={handleStudentChat}>
+          <Text style={styles.buttonText}>Iniciar chat como aluno</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -68,13 +75,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 60,
   },
-  botIcon: {
-    fontSize: 80,
-    textAlign: "center",
+  ueceLogoImage: {
+    width: 120,
+    height: 120,
   },
   buttonContainer: {
     paddingHorizontal: 20,
     paddingBottom: 50,
+    gap: 15,
   },
   startButton: {
     backgroundColor: "#4CAF50",
