@@ -10,7 +10,7 @@ import java.net.URLEncoder
 data class Localizacao(val lat: Double, val lng: Double)
 
 object GoogleMapsService {
-    private val apiKey = "AIzaSyCAh430FWO3cVEMTDujNRZhfseZfv9EZAw"
+    private val apiKey = ""
     private val client = HttpClient(CIO)
 
     suspend fun buscarCoordenadas(destino: String): Localizacao? {
