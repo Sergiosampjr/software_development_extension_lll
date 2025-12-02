@@ -1,5 +1,8 @@
 package com.sergio.chatbot
 
+
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -29,6 +32,18 @@ fun Application.module() {
             }
         )
     }
+
+
+    install(CORS) {
+        anyHost() // permite qualquer origem (para testes)
+        allowHeader(HttpHeaders.ContentType)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Get)
+    }
+
+
+
+
 
     routing {
         localRoutes() // rota /locais

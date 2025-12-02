@@ -28,41 +28,25 @@ fun Route.chatInfoRoutes() {
 
 fun Routing.chatRoutes() {
     post("/chat") {
-    println("Requisição recebida no /chat")
+        println("Requisição recebida no /chat")
 
-    val body = call.receive<ChatRequest>()
-    println("Body recebido: $body")
+        val body = call.receive<ChatRequest>()
+        println("Body recebido: $body")
 
-    val pergunta = body.mensagem
-    println("Pergunta recebida: $pergunta")
+        val pergunta = body.mensagem
+        println("Pergunta recebida: $pergunta")
 
-    // Chama a LLM da GROQ para extrair o local
-    val destino = GroqService.gerarResposta(pergunta)
+        // Chama a LLM da GROQ para gerar a resposta
+        val respostaLLM = GroqService.gerarResposta(pergunta)
+        println("Resposta da LLM: $respostaLLM")
 
+        // Verifica se a resposta está vazia ou contém erro
+        if (respostaLLM.isBlank() || respostaLLM.contains("erro", ignoreCase = true)) {
+            call.respond(HttpStatusCode.BadRequest, mapOf("erro" to "Não consegui gerar uma resposta."))
+            return@post
+        }
 
-
-
-    println("Resposta da LLM: $destino")
-
-    // Verifica se a resposta está vazia ou contém erro
-    if (destino.isBlank() || destino.contains("erro", ignoreCase = true)) {
-        call.respond(HttpStatusCode.BadRequest, mapOf("erro" to "Não consegui entender o local."))
-        return@post
+        // Retorna diretamente a resposta da LLM para o frontend
+        call.respond(mapOf("resposta" to respostaLLM))
     }
-
-    // Busca a descrição do local no Google Maps
-    val descricao = GoogleMapsService.buscarDescricaoDoLugar(destino)
-    println("Descrição obtida do Maps: $descricao")
-
-    if (descricao == null) {
-        call.respond(HttpStatusCode.NotFound, mapOf("erro" to "Não encontrei esse local no mapa."))
-        return@post
-    }
-
-    call.respond(mapOf("resposta" to descricao))
-}
-
-
-
-
 }
