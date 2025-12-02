@@ -1,4 +1,17 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Platform } from "react-native"
+"use client"
+
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Modal,
+  Image,
+} from "react-native"
 import { useState } from "react"
 import { StatusBar } from "react-native"
 
@@ -7,47 +20,34 @@ interface Message {
   text: string
   isUser: boolean
   isTyping?: boolean
+  mapImageUrl?: string
 }
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([])
-  const [inputText, setInputText] = useState('')
+  const [inputText, setInputText] = useState("")
+  const [modalVisible, setModalVisible] = useState(false)
+  const [currentMapImage, setCurrentMapImage] = useState("")
 
   const handleSend = () => {
-    if (inputText.trim() === '') return
+    if (inputText.trim() === "") return
 
-    // Adiciona mensagem do usuário
     const newUserMessage: Message = {
       id: Date.now().toString(),
       text: inputText,
       isUser: true,
     }
-    
-    setMessages(prev => [...prev, newUserMessage])
-    setInputText('')
 
-    // Simula "digitando..." do bot
-    setTimeout(() => {
-      const typingMessage: Message = {
-        id: Date.now().toString() + '_typing',
-        text: '...',
-        isUser: false,
-        isTyping: true,
-      }
-      setMessages(prev => [...prev, typingMessage])
+    setMessages((prev) => [...prev, newUserMessage])
+    setInputText("")
 
-      // Simula resposta do bot após 1 segundo
-      setTimeout(() => {
-        setMessages(prev => {
-          const filtered = prev.filter(msg => !msg.isTyping)
-          return [...filtered, {
-            id: Date.now().toString(),
-            text: 'Esta é uma resposta simulada do bot',
-            isUser: false,
-          }]
-        })
-      }, 1000)
-    }, 500)
+    // Aqui você fará a chamada para o backend Kotlin
+    // O backend retornará: { text: string, mapImageUrl?: string }
+  }
+
+  const handleShowMap = (imageUrl: string) => {
+    setCurrentMapImage(imageUrl)
+    setModalVisible(true)
   }
 
   const renderMessage = ({ item }: { item: Message }) => (
@@ -57,29 +57,25 @@ export default function ChatScreen() {
           <Text style={styles.botAvatarText}>🤖</Text>
         </View>
       )}
-      <View style={[
-        styles.messageBubble,
-        item.isUser ? styles.userBubble : styles.botBubble
-      ]}>
-        <Text style={[
-          styles.messageText,
-          item.isUser && styles.userMessageText
-        ]}>
-          {item.text}
-        </Text>
+      <View style={[styles.messageBubble, item.isUser ? styles.userBubble : styles.botBubble]}>
+        <Text style={[styles.messageText, item.isUser && styles.userMessageText]}>{item.text}</Text>
+        {!item.isUser && item.mapImageUrl && !item.isTyping && (
+          <TouchableOpacity style={styles.mapButton} onPress={() => handleShowMap(item.mapImageUrl!)}>
+            <Text style={styles.mapButtonText}>📍 Ver mapa</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   )
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
       <StatusBar backgroundColor="#4CAF50" barStyle="light-content" />
-      
-      {/* Header */}
+
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.headerIcon}>
@@ -89,16 +85,31 @@ export default function ChatScreen() {
         </View>
       </View>
 
-      {/* Messages List */}
       <FlatList
         data={messages}
         renderItem={renderMessage}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.messagesList}
         showsVerticalScrollIndicator={false}
       />
 
-      {/* Input Area */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButtonText}>✕</Text>
+            </TouchableOpacity>
+            <Image source={{ uri: currentMapImage }} style={styles.mapImage} resizeMode="contain" />
+            <Text style={styles.modalTitle}>Rota no Mapa</Text>
+          </View>
+        </View>
+      </Modal>
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -109,11 +120,7 @@ export default function ChatScreen() {
           onSubmitEditing={handleSend}
           returnKeyType="send"
         />
-        <TouchableOpacity 
-          style={styles.sendButton}
-          onPress={handleSend}
-          disabled={inputText.trim() === ''}
-        >
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend} disabled={inputText.trim() === ""}>
           <Text style={styles.sendIcon}>↑</Text>
         </TouchableOpacity>
       </View>
@@ -124,10 +131,10 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   header: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     paddingTop: 40,
     paddingBottom: 15,
     paddingHorizontal: 20,
@@ -135,103 +142,159 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   headerIcon: {
     width: 35,
     height: 35,
     borderRadius: 17.5,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 10,
   },
   headerIconText: {
     fontSize: 20,
   },
   headerTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   messagesList: {
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
   messageRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 15,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   messageRowUser: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   botAvatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 8,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
   botAvatarText: {
     fontSize: 18,
   },
   messageBubble: {
-    maxWidth: '75%',
+    maxWidth: "75%",
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
   },
   botBubble: {
-    backgroundColor: '#e8e8e8',
+    backgroundColor: "#e8e8e8",
     borderTopLeftRadius: 5,
   },
   userBubble: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     borderTopRightRadius: 5,
   },
   messageText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   userMessageText: {
-    color: 'white',
+    color: "white",
+  },
+  mapButton: {
+    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#4CAF50",
+    borderRadius: 12,
+    alignSelf: "flex-start",
+  },
+  mapButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    width: "90%",
+    maxHeight: "80%",
+    alignItems: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#f0f0f0",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
+  },
+  closeButtonText: {
+    fontSize: 20,
+    color: "#666",
+    fontWeight: "600",
+  },
+  mapImage: {
+    width: "100%",
+    height: 400,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+    marginTop: 15,
   },
   inputContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 15,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
+    backgroundColor: "#f5f5f5",
+    alignItems: "center",
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: "#e0e0e0",
   },
   input: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 25,
     paddingHorizontal: 20,
     paddingVertical: 12,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
     marginRight: 10,
   },
   sendButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#4CAF50',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#4CAF50",
+    alignItems: "center",
+    justifyContent: "center",
   },
   sendIcon: {
-    color: 'white',
+    color: "white",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 })
