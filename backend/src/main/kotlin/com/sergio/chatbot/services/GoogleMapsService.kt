@@ -1,70 +1,77 @@
-package com.sergio.chatbot.services
+package com.sergio.chatbot.services // Ajuste o pacote se necessário
 
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
-import kotlinx.serialization.json.*
-import java.net.URLEncoder
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
-data class Localizacao(val lat: Double, val lng: Double)
+// --- Classes para o JSON do Gemini (API) ---
+@Serializable
+data class GeminiRequest(val contents: List_GeminiContent)
 
-object GoogleMapsService {
-    private val apiKey = ""
-    private val client = HttpClient(CIO)
+@Serializable
+data class GeminiContent(val parts: List_GeminiPart)
 
-    suspend fun buscarCoordenadas(destino: String): Localizacao? {
-    val url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" +
-        URLEncoder.encode(destino, "UTF-8") + "&key=$apiKey"
+@Serializable
+data class GeminiPart(val text: String)
 
-    val response: String = client.get(url).body()
+@Serializable
+data class GeminiResponse(val candidates: List<GeminiCandidate>? = null)
 
-    println("Buscando coordenadas para: $destino")
-    println("URL: $url")
-    println("Resposta da API: $response")
+@Serializable
+data class GeminiCandidate(val content: GeminiContent)
 
-    val json = Json.parseToJsonElement(response).jsonObject
-    val resultado = json["results"]?.jsonArray?.firstOrNull()?.jsonObject ?: return null
+// --- O Serviço ---
+class GoogleMapsService {
 
-    val lat = resultado["geometry"]?.jsonObject
-        ?.get("location")?.jsonObject?.get("lat")?.jsonPrimitive?.doubleOrNull
-    val lng = resultado["geometry"]?.jsonObject
-        ?.get("location")?.jsonObject?.get("lng")?.jsonPrimitive?.doubleOrNull
+    // ⚠️ COLOQUE SUA CHAVE AQUI
+    private val apiKey = "AIzaSyC4KwYZ1q_it1R3k7rHDMhIO6HmY-L9IYA"
 
-    return if (lat != null && lng != null) Localizacao(lat, lng) else null
-}
-
-
-    suspend fun buscarDescricaoDoLugar(destino: String): String? {
-    val url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" +
-        URLEncoder.encode(destino, "UTF-8") + "&key=$apiKey"
-
-    val response: String = client.get(url).body()
-    
-    val json = Json.parseToJsonElement(response).jsonObject
-
-    val status = json["status"]?.jsonPrimitive?.contentOrNull
-    if (status != "OK") {
-        println("Erro da API do Google Maps: $status")
-        return null
+    // Configura o cliente HTTP do Ktor
+    private val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(Json { ignoreUnknownKeys = true })
+        }
     }
 
-    val resultado = json["results"]?.jsonArray?.firstOrNull()?.jsonObject ?: return null
+    suspend fun generateContent(prompt: String): String {
+        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey"
 
+        try {
+            // Monta o JSON para enviar
+            val requestBody = GeminiRequest(
+                contents = listOf(
+                    GeminiContent(parts = listOf(GeminiPart(text = prompt)))
+                )
+            )
 
+            // Faz o POST para o Google
+            val response = client.post(url) {
+                contentType(ContentType.Application.Json)
+                setBody(requestBody)
+            }
 
+            // Lê a resposta
+            if (response.status == HttpStatusCode.OK) {
+                val responseData: GeminiResponse = response.body()
+                // Pega o texto da resposta
+                return responseData.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+                    ?: "A IA não retornou texto."
+            } else {
+                return "Erro na API do Google: ${response.status}"
+            }
 
-
-
-    val nome = resultado["name"]?.jsonPrimitive?.contentOrNull
-    val endereco = resultado["formatted_address"]?.jsonPrimitive?.contentOrNull
-
-    return if (nome != null && endereco != null) "$nome fica em: $endereco" else null
+        } catch (e: Exception) {
+            return "Erro ao chamar o Gemini: ${e.message}"
+        }
+    }
 }
 
-
-
-
-
-
-}
+// Pequeno helper para listas
+typealias List_GeminiContent = List<GeminiContent>
+typealias List_GeminiPart = List<GeminiPart>

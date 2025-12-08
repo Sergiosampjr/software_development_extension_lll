@@ -13,26 +13,66 @@ import {
   TouchableOpacity,
   View,
   Image,
+  Alert,
+  ActivityIndicator // Adicionei para mostrar que está carregando
 } from "react-native"
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false) // Novo estado para controlar o loading
 
-  const handleLogin = () => {
-    // Lógica de login aqui
-    console.log("Login com email:", email)
-    console.log("Login com senha:", password)
-    // Navegar para próxima tela após login
-    // Depois de validar, navegue para o chat
-    router.push("/home/chat")
+  const handleLogin = async () => {
+    // Validação básica
+    if (!email || !password) {
+      Alert.alert("Erro", "Por favor, preencha email e senha.")
+      return
+    }
+
+    setIsLoading(true) // Ativa o loading
+
+    try {
+      // ⚠️ IMPORTANTE:
+      // Se for Emulador Android use: 'http://10.0.2.2:8080/auth/login'
+      // Se for iOS Simulator use: 'http://localhost:8080/auth/login'
+      // Se for celular físico use o IP do seu PC: 'http://192.168.X.X:8080/auth/login'
+
+      const response = await fetch('http://10.0.2.2:9090/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: password, // O backend espera "senha", mas aqui usamos "password"
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Sucesso!
+        console.log("Login realizado com ID:", data.id)
+        router.push("/home/chat")
+      } else {
+        // Erro vindo do backend (ex: senha errada)
+        Alert.alert("Falha no Login", data.error || "Email ou senha incorretos")
+      }
+
+    } catch (error) {
+      console.error(error)
+      Alert.alert("Erro de Conexão", "Não foi possível conectar ao servidor. Verifique se o backend está rodando.")
+    } finally {
+      setIsLoading(false) // Desativa o loading
+    }
   }
 
   const handleCreateAccount = () => {
-    // Navegar para tela de cadastro
-    console.log("Criar conta")
+    // Se você tiver uma rota de cadastro, mude aqui.
+    // Por enquanto, vou deixar um alerta.
+    Alert.alert("Em breve", "A tela de cadastro será implementada.")
+    // router.push("/auth/register")
   }
-  
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
@@ -40,20 +80,17 @@ export default function LoginScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.logoContainer}>
-          <Image 
+          {/* Certifique-se que essa imagem existe neste caminho */}
+          <Image
             source={require('../../public/UECE_2023.png')}
             style={styles.logo}
             resizeMode="contain"
           />
         </View>
 
-        {/* Título */}
         <Text style={styles.title}>UECEbot</Text>
-
-        {/* Subtítulo */}
         <Text style={styles.subtitle}>Efetue seu login</Text>
 
-        {/* Campo de email */}
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -80,12 +117,19 @@ export default function LoginScreen() {
           />
         </View>
 
-        {/* Botão Entrar */}
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Entrar</Text>
+        {/* Botão Entrar com Loading */}
+        <TouchableOpacity
+          style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+          onPress={handleLogin}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.loginButtonText}>Entrar</Text>
+          )}
         </TouchableOpacity>
 
-        {/* Link para criar conta */}
         <TouchableOpacity onPress={handleCreateAccount}>
           <Text style={styles.createAccountText}>
             Não possui conta? <Text style={styles.linkText}>Clique aqui</Text>
@@ -152,6 +196,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+  },
+  loginButtonDisabled: {
+    backgroundColor: "#A5D6A7", // Um verde mais claro para indicar desabilitado
   },
   loginButtonText: {
     color: "#FFFFFF",

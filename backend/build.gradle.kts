@@ -1,11 +1,12 @@
 plugins {
-    kotlin("jvm") version "1.9.10"
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.serialization") version "1.9.23"
     application
 }
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -20,6 +21,9 @@ dependencies {
     implementation("org.postgresql:postgresql:42.6.0")
     implementation("io.ktor:ktor-server-status-pages:2.3.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("mysql:mysql-connector-java:8.0.33")
+    implementation("org.jetbrains.exposed:exposed-core:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
 
 
     dependencies {
@@ -39,6 +43,9 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.4")
     implementation("io.ktor:ktor-client-cio:2.3.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("io.ktor:ktor-client-core-jvm:2.3.4")
+    implementation("io.ktor:ktor-client-cio-jvm:2.3.4")
+    implementation("io.ktor:ktor-client-content-negotiation-jvm:2.3.4")
 
 
 

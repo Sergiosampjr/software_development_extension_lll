@@ -49,4 +49,5 @@ fun Routing.chatRoutes() {
         // Retorna diretamente a resposta da LLM para o frontend
         call.respond(mapOf("resposta" to respostaLLM))
     }
+
 }
