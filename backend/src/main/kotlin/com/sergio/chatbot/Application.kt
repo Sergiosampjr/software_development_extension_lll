@@ -12,7 +12,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import com.sergio.chatbot.models.Local
+import com.models.Local
 import com.sergio.chatbot.routes.localRoutes
 import com.sergio.chatbot.routes.chatRoutes
 

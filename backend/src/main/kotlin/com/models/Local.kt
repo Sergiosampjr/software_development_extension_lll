@@ -1,4 +1,6 @@
-package com.sergio.chatbot.models
+package com.models
+
+
 
 import kotlinx.serialization.Serializable
 
@@ -10,5 +12,6 @@ data class Local(
     val descricao: String,
     val latitude: Double,
     val longitude: Double,
-    val horarioFuncionamento: String?
+    val telefone: String? = null,
+    val horarioFuncionamento: String? = null
 )
