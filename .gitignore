@@ -15,3 +15,5 @@ frontend/dist/
 # Sistema
 .DS_Store
 Thumbs.db
+local.properties
+replace-secrets.txt

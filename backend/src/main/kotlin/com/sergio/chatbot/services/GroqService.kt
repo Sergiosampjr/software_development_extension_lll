@@ -11,16 +11,44 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 object GroqService {
+
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
         }
     }
 
-    private const val apiKey = "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" // sua chave da Groq
+    /**
+     * 1️⃣ Carrega a API KEY primeiro da variável de ambiente (recomendado no backend)
+     * 2️⃣ Se estiver vazio, tenta carregar do arquivo local.properties
+     */
+    private val apiKey: String = System.getenv("GROQ_API_KEY")
+        ?: readLocalPropertiesKey()
+        ?: ""
+
+    /**
+     * Lê a chave do arquivo local.properties
+     */
+    private fun readLocalPropertiesKey(): String? {
+        return try {
+            val props = java.util.Properties()
+            val file = java.io.File("local.properties")
+            if (file.exists()) {
+                props.load(file.inputStream())
+                props.getProperty("GROQ_API_KEY")
+            } else null
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     suspend fun gerarResposta(pergunta: String): String {
         println("Chamando Groq API...")
+
+        if (apiKey.isBlank()) {
+            println("❌ ERRO: API KEY não encontrada. Configure no local.properties ou variável ambiente.")
+            return "Erro interno: API KEY não configurada."
+        }
 
         return try {
             val response: HttpResponse = client.post("https://api.groq.com/openai/v1/chat/completions") {
@@ -33,7 +61,7 @@ object GroqService {
                         model = "llama-3.1-8b-instant",
                         messages = listOf(
                             Message("system", """
-    Você é um assistente especializado em fornecer informações sobre os locais da UECE Campus Itaperi.
+Você é um assistente especializado em fornecer informações sobre os locais da UECE Campus Itaperi.
 
 Sua função é:
 - responder a localização dos lugares
@@ -74,8 +102,7 @@ NÃO use "action" para nenhum caso exceto localização.
 Você conhece todos os locais cadastrados no seguinte banco:
 
 <LISTA_DE_LOCAIS_AQUI>
-
-    """.trimIndent()),
+""".trimIndent()),
                             Message("user", pergunta)
                         )
                     )
@@ -83,16 +110,18 @@ Você conhece todos os locais cadastrados no seguinte banco:
             }
 
             val result: ChatResponse = response.body()
-            val respostaGerada = result.choices.firstOrNull()?.message?.content ?: "Desculpe, não consegui gerar uma resposta."
+            val respostaGerada =
+                result.choices.firstOrNull()?.message?.content
+                    ?: "Desculpe, não consegui gerar uma resposta."
+
             println("Resposta da API: $respostaGerada")
             respostaGerada
 
         } catch (e: Exception) {
-    e.printStackTrace() // mostra o erro completo no terminal
-    println("Erro ao chamar a Groq API: ${e.message}")
-    "Desculpe, ocorreu um erro ao gerar a resposta."
-}
-
+            e.printStackTrace()
+            println("Erro ao chamar a Groq API: ${e.message}")
+            "Desculpe, ocorreu um erro ao gerar a resposta."
+        }
     }
 }
 
