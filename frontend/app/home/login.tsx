@@ -48,7 +48,7 @@ export default function LoginScreen() {
         </View>
 
         {/* Título */}
-        <Text style={styles.title}>UECEbot</Text>
+        <Text style={styles.title}>Ueceencontra</Text>
 
         {/* Subtítulo */}
         <Text style={styles.subtitle}>Efetue seu login</Text>

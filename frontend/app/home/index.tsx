@@ -18,14 +18,10 @@ export default function HomeScreen() {
 
       <View style={styles.content}>
         <Text style={styles.welcomeText}>Bem vindo ao</Text>
-        <Text style={styles.botName}>UECEBot</Text>
+        <Text style={styles.botName}>Uecencontra</Text>
 
         <View style={styles.iconContainer}>
-          <Image 
-            source={require('../../public/UECE_2023.png')}
-            style={styles.ueceLogoImage}
-            resizeMode="contain"
-          />
+          <Image source={require("../../public/UECE_2023.png")} style={styles.ueceLogoImage} resizeMode="contain" />
         </View>
       </View>
 
