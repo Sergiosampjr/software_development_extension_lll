@@ -1,7 +1,6 @@
 package com.models
 
 
-
 import kotlinx.serialization.Serializable
 
 @Serializable

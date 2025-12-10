@@ -1,11 +1,14 @@
-package com.seuprojeto.service
+package com.sergio.chatbot.services
 
-import com.seuprojeto.model.Local
+import com.models.Local
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import java.io.File
 
 object LocalService {
+
+    init {
+        println("🔍 Carregando locais.json...")
+    }
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -24,4 +27,4 @@ object LocalService {
         }
     }
 }
-// FORCANDO ATUALIZAÇÃO PARA GITHUB
+
