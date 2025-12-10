@@ -24,7 +24,7 @@ object GroqService {
     }
 
     // COLOQUE SUA CHAVE AQUI
-    private val apiKey: String = "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".trim()
+    private val apiKey: String = "".trim()
 
     // Histórico de mensagens (contexto)
     private val mensagens = mutableListOf<Pair<String, String>>() // Pair<role, content>
