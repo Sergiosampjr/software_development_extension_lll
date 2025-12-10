@@ -1,14 +1,21 @@
 package com.sergio.chatbot
-import io.ktor.http.*
-import io.ktor.server.response.*
 
-import com.sergio.chatbot.routes.localRoutes
+
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
+import com.models.Local
+import com.sergio.chatbot.routes.localRoutes
+import com.sergio.chatbot.routes.chatRoutes
+
 
 fun main() {
     embeddedServer(Netty, port = 8080) {
@@ -18,14 +25,31 @@ fun main() {
 
 fun Application.module() {
     install(ContentNegotiation) {
-        json()
+        json(
+            Json {
+                prettyPrint = true
+                isLenient = true
+            }
+        )
     }
 
+
+    install(CORS) {
+        anyHost() // permite qualquer origem (para testes)
+        allowHeader(HttpHeaders.ContentType)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Get)
+    }
+
+
+
+
+
     routing {
-        localRoutes()
-        // 👇 Adicione aqui:
+        localRoutes() // rota /locais
+        chatRoutes()
         get("/") {
-            call.respondText("Servidor Ktor rodando com sucesso!", ContentType.Text.Plain)
+            call.respondText("Servidor Ktor rodando com sucesso!")
         }
     }
 }

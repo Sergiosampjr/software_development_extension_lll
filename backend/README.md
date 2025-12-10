@@ -9,3 +9,13 @@ Para roda ro back end entre na pasta backend e rode os seugintes comandos no ter
 
 
 4 passo >>> O retorno deve ser esse >>> "Servidor Ktor rodando com sucesso!"
+
+
+
+
+
+
+
+
+
+
