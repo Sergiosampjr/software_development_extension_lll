@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Platform } from "react-native"
-=======
 "use client"
 
 import {
@@ -15,7 +12,6 @@ import {
   Modal,
   Image,
 } from "react-native"
->>>>>>> Stashed changes
 import { useState } from "react"
 import { StatusBar } from "react-native"
 
@@ -24,8 +20,6 @@ interface Message {
   text: string
   isUser: boolean
   isTyping?: boolean
-<<<<<<< Updated upstream
-=======
   mapImageUrl?: string
 }
 
@@ -82,58 +76,22 @@ const detectRouteKeywords = (text: string): boolean => {
   ]
   const lowerText = text.toLowerCase()
   return keywords.some((keyword) => lowerText.includes(keyword))
->>>>>>> Stashed changes
 }
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([])
-<<<<<<< Updated upstream
-  const [inputText, setInputText] = useState('')
-
-  const handleSend = () => {
-    if (inputText.trim() === '') return
-=======
   const [inputText, setInputText] = useState("")
   const [modalVisible, setModalVisible] = useState(false)
   const [currentMapImage, setCurrentMapImage] = useState<any>(null)
 
   const handleSend = async () => {
     if (inputText.trim() === "") return
->>>>>>> Stashed changes
 
     const newUserMessage: Message = {
       id: Date.now().toString(),
       text: inputText,
       isUser: true,
     }
-<<<<<<< Updated upstream
-    
-    setMessages(prev => [...prev, newUserMessage])
-    setInputText('')
-
-    // Simula "digitando..." do bot
-    setTimeout(() => {
-      const typingMessage: Message = {
-        id: Date.now().toString() + '_typing',
-        text: '...',
-        isUser: false,
-        isTyping: true,
-      }
-      setMessages(prev => [...prev, typingMessage])
-
-      // Simula resposta do bot após 1 segundo
-      setTimeout(() => {
-        setMessages(prev => {
-          const filtered = prev.filter(msg => !msg.isTyping)
-          return [...filtered, {
-            id: Date.now().toString(),
-            text: 'Esta é uma resposta simulada do bot',
-            isUser: false,
-          }]
-        })
-      }, 1000)
-    }, 500)
-=======
     setMessages((prev) => [...prev, newUserMessage])
 
     const pergunta = inputText
@@ -199,7 +157,6 @@ export default function ChatScreen() {
       setCurrentMapImage({ uri: imageUrl })
     }
     setModalVisible(true)
->>>>>>> Stashed changes
   }
 
   const renderMessage = ({ item }: { item: Message }) => (
@@ -283,11 +240,7 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-<<<<<<< Updated upstream
-    backgroundColor: '#f5f5f5',
-=======
     backgroundColor: "#f5f5f5",
->>>>>>> Stashed changes
   },
   header: {
     backgroundColor: "#4CAF50",
@@ -298,133 +251,68 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   headerContent: {
-<<<<<<< Updated upstream
-    flexDirection: 'row',
-    alignItems: 'center',
-=======
     flexDirection: "row",
     alignItems: "center",
->>>>>>> Stashed changes
   },
   headerIcon: {
     width: 35,
     height: 35,
     borderRadius: 17.5,
-<<<<<<< Updated upstream
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
-=======
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     alignItems: "center",
     justifyContent: "center",
->>>>>>> Stashed changes
     marginRight: 10,
   },
   headerIconText: {
     fontSize: 20,
   },
   headerTitle: {
-<<<<<<< Updated upstream
-    color: 'white',
-    fontSize: 20,
-    fontWeight: '600',
-=======
     color: "white",
     fontSize: 20,
     fontWeight: "600",
->>>>>>> Stashed changes
   },
   messagesList: {
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
   messageRow: {
-<<<<<<< Updated upstream
-    flexDirection: 'row',
-    marginBottom: 15,
-    alignItems: 'flex-start',
-  },
-  messageRowUser: {
-    justifyContent: 'flex-end',
-=======
     flexDirection: "row",
     marginBottom: 15,
     alignItems: "flex-start",
   },
   messageRowUser: {
     justifyContent: "flex-end",
->>>>>>> Stashed changes
   },
   botAvatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
-<<<<<<< Updated upstream
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-=======
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 8,
     borderWidth: 1,
     borderColor: "#e0e0e0",
->>>>>>> Stashed changes
   },
   botAvatarText: {
     fontSize: 18,
   },
   messageBubble: {
-<<<<<<< Updated upstream
-    maxWidth: '75%',
-=======
     maxWidth: "75%",
->>>>>>> Stashed changes
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
   },
   botBubble: {
-<<<<<<< Updated upstream
-    backgroundColor: '#e8e8e8',
-    borderTopLeftRadius: 5,
-  },
-  userBubble: {
-    backgroundColor: '#4CAF50',
-=======
     backgroundColor: "#e8e8e8",
     borderTopLeftRadius: 5,
   },
   userBubble: {
     backgroundColor: "#4CAF50",
->>>>>>> Stashed changes
     borderTopRightRadius: 5,
   },
   messageText: {
     fontSize: 16,
-<<<<<<< Updated upstream
-    color: '#333',
-  },
-  userMessageText: {
-    color: 'white',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    padding: 15,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: 'white',
-=======
     color: "#333",
   },
   userMessageText: {
@@ -497,35 +385,18 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     backgroundColor: "white",
->>>>>>> Stashed changes
     borderRadius: 25,
     paddingHorizontal: 20,
     paddingVertical: 12,
     fontSize: 16,
     borderWidth: 1,
-<<<<<<< Updated upstream
-    borderColor: '#e0e0e0',
-=======
     borderColor: "#e0e0e0",
->>>>>>> Stashed changes
     marginRight: 10,
   },
   sendButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-<<<<<<< Updated upstream
-    backgroundColor: '#4CAF50',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sendIcon: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-})
-=======
     backgroundColor: "#4CAF50",
     alignItems: "center",
     justifyContent: "center",
@@ -536,5 +407,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 })
-
->>>>>>> Stashed changes
