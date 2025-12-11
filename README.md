@@ -15,6 +15,15 @@ Este projeto integra **Frontend (React Native)** e **Backend (Ktor em Kotlin)** 
 - **Backend**: Kotlin, Ktor, integração com GROQ  
 - **Ferramentas**: VSCode, Gradle, npm, curl para testes
 
+Configuração da API GroqService.kt
+
+Obtenha a API da groq
+
+
+1 passo : Dirija-se ao site >>> https://groq.com/
+2 passo : cadastre-se no site e obtenha a API key
+3 passo :colocar a chave API no seguinte arquivo >>> /home/sergio_nunes/Documentos/Projeto de software/backend/src/main/kotlin/com/Uecencontra/chatbot/services/GroqService.kt
+4 passo : Colar entre as aspas a API KEY.
 ---
 
 ## 💡 Dificuldades Encontradas
@@ -37,7 +46,19 @@ Este projeto integra **Frontend (React Native)** e **Backend (Ktor em Kotlin)** 
 4. **Quarta versão**: Validação da requisição de prompts/método post para a tela de chat.  
 4. **Quarta versão**: Implementação da navegação automática para o mapa quando o usuário solicita.  
 5  **Quinta versão**: Implementação da API do google maps.  
+
+
+
+
+
 ![alt text](imagens/googleMaps.jpeg)
+
+
+
+
+
+
+
 6  **sexta versão**: Desistência da integração da API do google maps. 
 
 6  **sexta versão**: Implementação do método banco de imagens de rotas dos lugares da UECE.  
@@ -49,10 +70,19 @@ Próximos passos:
 
 Integrar a alguma API de mapa.
 
-![alt text](imagens/WhatsApp Image 2025-12-11 at 09.14.15.jpeg)
 
 
-![alt text](imagens/WhatsApp Image 2025-12-11 at 08.51.47.jpeg)
+
+![alt text](imagens/whatsapp_09_14.jpeg)
+
+
+
+
+
+
+
+![alt text](imagens/whatsapp_08_51.jpeg)
+
 
 ---
 
