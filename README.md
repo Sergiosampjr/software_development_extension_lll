@@ -40,7 +40,8 @@ Obtenha a API da groq
 3. **Terceira versão**: Integração entre frontend e backend via requisições HTTP.
 
 
-![alt text](imagens/Captura de tela de 2025-12-11 17-10-51.png)
+![texto alternativo](imagens/captura_17_10_51.png)
+
 
 
 4. **Quarta versão**: Validação da requisição de prompts/método post para a tela de chat.  
