@@ -9,8 +9,8 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  Modal,
   Image,
+  Modal, // Import Modal from react-native
 } from "react-native"
 import { useState } from "react"
 import { StatusBar } from "react-native"
@@ -20,7 +20,7 @@ interface Message {
   text: string
   isUser: boolean
   isTyping?: boolean
-  mapImageUrl?: string
+  imageUrl?: string
 }
 
 const mockMaps = [
@@ -98,7 +98,7 @@ export default function ChatScreen() {
     setInputText("")
 
     const typingMessage: Message = {
-      id: Date.now().toString() + "_typing",
+      id: "typing",
       text: "...",
       isUser: false,
       isTyping: true,
@@ -106,7 +106,7 @@ export default function ChatScreen() {
     setMessages((prev) => [...prev, typingMessage])
 
     try {
-      const response = await fetch("http://localhost:8080/chat", {
+      const response = await fetch("http://127.0.0.1:8080/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mensagem: pergunta }),
@@ -126,7 +126,7 @@ export default function ChatScreen() {
             id: Date.now().toString(),
             text: data.resposta ?? data.erro ?? "sem resposta do backend",
             isUser: false,
-            mapImageUrl: mapForDestination && hasRouteKeywords ? "mock" : undefined,
+            imageUrl: mapForDestination && hasRouteKeywords ? "mock" : (data.imagem ?? "sem caminho"),
           },
         ]
       })
@@ -163,16 +163,22 @@ export default function ChatScreen() {
     <View style={[styles.messageRow, item.isUser && styles.messageRowUser]}>
       {!item.isUser && (
         <View style={styles.botAvatar}>
-          <Text style={styles.botAvatarText}>🤖</Text>
+          <Image
+            source={require("../../public/UECE_2023.png")}
+            style={{ width: 28, height: 28 }}
+            resizeMode="contain"
+          />
         </View>
       )}
       <View style={[styles.messageBubble, item.isUser ? styles.userBubble : styles.botBubble]}>
         <Text style={[styles.messageText, item.isUser && styles.userMessageText]}>{item.text}</Text>
-        {!item.isUser && item.mapImageUrl && !item.isTyping && (
-          <TouchableOpacity style={styles.mapButton} onPress={() => handleShowMap(item.mapImageUrl!)}>
-            <Text style={styles.mapButtonText}>📍 Ver mapa</Text>
-          </TouchableOpacity>
-        )}
+        {item.imageUrl && (
+            <Image 
+              source={{ uri: item.imageUrl }}
+              style={{ width: 600, height: 600, marginTop: 10, borderRadius: 10 }}
+              resizeMode="contain"
+            />
+          )}
       </View>
     </View>
   )
@@ -188,7 +194,11 @@ export default function ChatScreen() {
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.headerIcon}>
-            <Text style={styles.headerIconText}>🤖</Text>
+            <Image
+              source={require("../../public/UECE_2023.png")}
+              style={{ width: 30, height: 30 }}
+              resizeMode="contain"
+            />
           </View>
           <Text style={styles.headerTitle}>Uecencontra</Text>
         </View>

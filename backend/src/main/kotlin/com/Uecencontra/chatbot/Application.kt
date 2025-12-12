@@ -1,6 +1,6 @@
 package com.sergio.chatbot
 
-
+import io.ktor.server.http.content.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -33,23 +33,33 @@ fun Application.module() {
         )
     }
 
-
     install(CORS) {
         anyHost() // permite qualquer origem (para testes)
         allowHeader(HttpHeaders.ContentType)
-        allowMethod(HttpMethod.Post)
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Patch)
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
     }
 
-
-
-
-
     routing {
+        static {
+            resources("static")
+            defaultResource("static/index.html")
+        }
+        
         localRoutes() // rota /locais
         chatRoutes()
+        
         get("/") {
             call.respondText("Servidor Ktor rodando com sucesso!")
         }
     }
 }
+

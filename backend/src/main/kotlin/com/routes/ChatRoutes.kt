@@ -39,14 +39,48 @@ fun Routing.chatRoutes() {
         // Chama a LLM da GROQ para gerar a resposta
         val respostaLLM = GroqService.gerarResposta(pergunta)
         println("Resposta da LLM: $respostaLLM")
+        val regras = listOf(
+        "ru" to "ru.png",
+        "restaurante.*universitário".toRegex() to "ru.png",
+        "biblioteca.*central".toRegex() to "biblioteca.png",
+        "bloco.*f" to "blocof.png",
+        "historia" to "historia.png",
+        "história" to "historia.png",
+        "complexo" to "complexo.png",
+        "poliesportivo" to "complexo.png",
+        "complexo.*poliesportivo" to "complexo.png",
+        "infelizmente" to null,
+        )
+
+        val destinoLower = respostaLLM.lowercase()
+        val caminho = regras.firstOrNull { rule ->
+            when (val key = rule.first) {
+                is String -> destinoLower.contains(key)
+                is Regex -> key.containsMatchIn(destinoLower)
+                else -> false
+            }
+        }?.second?.let { "http://localhost:8080/$it" } ?: ""
+        println("Resposta da LLM: $respostaLLM")
 
         // Verifica se a resposta está vazia ou contém erro
         if (respostaLLM.isBlank() || respostaLLM.contains("erro", ignoreCase = true)) {
-            call.respond(HttpStatusCode.BadRequest, mapOf("erro" to "Não consegui gerar uma resposta."))
+            call.respond(
+            mapOf(
+                "resposta" to respostaLLM,
+                "imagem" to caminho
+                )
+            )
             return@post
         }
-
+        println(caminho)
         // Retorna diretamente a resposta da LLM para o frontend
-        call.respond(mapOf("resposta" to respostaLLM))
+        call.respond(
+            mapOf(
+                "resposta" to respostaLLM,
+                "imagem" to caminho
+            )
+        )
+        return@post
+        
     }
 }
